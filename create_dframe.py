@@ -4,10 +4,6 @@ import csv
 import pandas as pd
 
 
-#f = open("movie_titles.txt", "r")
-#fl = f.readlines()
-#f.close()
-
 # Transform additional csv dataframe(s) into searchable format based on ids
 imdb_data = []
 with open("IMDb_movies.csv") as csvfile:
@@ -26,7 +22,7 @@ csv_columns = ['id', 'tmdb_id', 'imdb_id', 'title', 'original_title', 'adult',
                'actor0', 'actor1', 'actor2', 'actor3', 'actor4']
 
 
-# returns the queried api dictionary based on the given title
+# returns the queried api json dictionary based on the given title
 # if no information exists returns None
 def title_2_api_dict (title):
     url = 'http://128.2.204.215:8080/movie/' + title[:-1]
@@ -46,7 +42,7 @@ def title_2_api_dict (title):
             med.close()
         return None
 
-# Returns queried api for the title plus additional data from an external imdb dataset
+# Returns queried api json dict for the title plus additional data from an external imdb dataset
 def title_2_advanced_api_dict (title):
     url = 'http://128.2.204.215:8080/movie/' + title[:-1]
     try:
@@ -55,13 +51,6 @@ def title_2_advanced_api_dict (title):
         imdb_id_tt = api_info['imdb_id']
     except (json.decoder.JSONDecodeError, KeyError):
         print("dne when queried or imdb missing: ", title[:-1])
-        #med = open("missing_external_data.txt", "r")
-        #med_set = set(med.readlines())
-        #med.close()
-        #if title not in med_set:
-            #med = open("missing_external_data.txt", "a")
-            #med.write(title)
-            #med.close()
         return None
 
 
@@ -146,8 +135,8 @@ def title_2_advanced_api_dict (title):
         return None
 
 
-# takes src.txt file and creates dst.csv
-# basic data filtering to make df one dimensional
+# Given .txt file containing tiles in name+name+year form
+# will construct a dataframe with queried data
 def create_basic_dframe(src):
     f = open(src, "r")
     fl = f.readlines()
@@ -282,6 +271,8 @@ def create_basic_dframe(src):
             i += 1
     return pd.DataFrame(data)
 
+# Given .txt file containing tiles in name+name+year form
+# will construct a pandas dataframe with queried data and additional imdb dat
 def create_advanced_dframe(src):
     f = open(src, "r")
     fl = f.readlines()
@@ -415,10 +406,15 @@ def create_advanced_dframe(src):
             i += 1
     return pd.DataFrame(data)
 
+# Given .txt file containing tiles in name+name+year form
+# will construct an api csv file with queried data
+# and save it to dest
 def save_api(src, dest):
     df = create_basic_dframe(src)
     df.to_csv(dest)
 
+# Given .txt file containing tiles in name+name+year form
+# will construct an api csv file with queried data and additional imdb data
 def save_advanced_api(src, dest):
     df = create_advanced_dframe(src)
     df.to_csv(dest)
@@ -426,25 +422,3 @@ def save_advanced_api(src, dest):
 
 save_advanced_api('movie_titles.txt', 'advanced_api_data.csv')
 save_api('movie_titles.txt', 'api_data.csv')
-
-
-# count = 0
-# for movie in fl:
-#    api = title_2_advanced_api_dict(movie)
-#    if api is None:
-#        continue
-    #else:
-    #
-#    if count > 10000:
-#        break
-#    else:
-#        count += 1
-
-#with open('test_write.csv', mode='w') as dest:
-#    writer = csv.DictWriter(dest,fieldnames=csv_columns)
-
-
-#        print(api_info)
-
- #       f.write()
- #       break
