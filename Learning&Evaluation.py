@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 from sklearn import linear_model
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.feature_selection import SelectKBest
 from sklearn.metrics import mean_squared_error, r2_score, accuracy_score
 from sklearn.model_selection import train_test_split
@@ -16,6 +16,7 @@ from feature_extraction import advanced_clean
 from feature_extraction import cut
 import matplotlib
 import matplotlib.pyplot as plt
+import pickle
 
 basic_df = pd.read_csv('api_data.csv')
 basic_df = only_numeric(basic_df)
@@ -238,11 +239,12 @@ def k_best_advanced(train, test):
 
     features = ['revenue', 'budget', 'vote_count', 'runtime',
                 'other_prod_co', 'in_a_collection', 'popularity',
-                'metascore', 'Adventure', 'Fantasy', 'other genre',
-                'release_date', 'Animation', 'Thriller', 'top100_director', 'en',
-                'vote_average', 'Action', 'Science Fiction', 'homepage',
-                'Documentary', 'Thriller', 'Action',
-                'Fantasy']
+                'Adventure', 'Fantasy', 'other genre',
+                'release_date', 'Animation', 'Thriller',
+                'vote_average', 'Action', 'Science Fiction',
+                'Documentary',
+                'top100_director', 'metascore']
+
 
     simple_train = train[features]
 
@@ -251,9 +253,10 @@ def k_best_advanced(train, test):
     X_train = simple_train.to_numpy()
     X_test = simple_test.to_numpy()
 
-    reg = RandomForestRegressor(random_state=0, max_depth=6)
+    reg = RandomForestRegressor(random_state=2, max_depth=7)
     #reg = DecisionTreeRegressor(random_state=2, max_depth=7, min_weight_fraction_leaf=.1)
     reg.fit(X_train, y_train)
+    pickle.dump(reg, open("advanced_rf1.sav", 'wb'))
 
     y_pred = reg.predict(X_test)
 
@@ -292,10 +295,11 @@ def k_best(train, test):
     # print(featureScores.nlargest(50, 'Score'))  # print 10 best features
 
     features = ['revenue', 'budget', 'vote_count', 'runtime',
-                'other_prod_co', 'in_a_collection',
+                'other_prod_co', 'in_a_collection', 'popularity',
                 'Adventure', 'Fantasy', 'other genre',
-                'release_date', 'Animation', 'Thriller', 'homepage', 'en',
-                'vote_average', 'Action', 'Science Fiction']
+                'release_date', 'Animation', 'Thriller',
+                'vote_average', 'Action', 'Science Fiction',
+                'Documentary']
 
     simple_train = train[features]
 
@@ -307,6 +311,7 @@ def k_best(train, test):
     reg = RandomForestRegressor(random_state=0, max_depth=5) # 6
     #reg = DecisionTreeRegressor(random_state=2, max_depth=7, min_weight_fraction_leaf=.1)
     reg.fit(X_train, y_train)
+    pickle.dump(reg, open("rf1.sav", 'wb'))
 
     y_pred = reg.predict(X_test)
 
@@ -342,16 +347,17 @@ def plots(train):
 
 
 print('baseline 1')
-baseline1(train1, test1, False)
 baseline1(train2, test2, False)
+baseline1(train1, test1, False)
 print('baseline 2')
-baseline2(train1, test1, False)
 baseline2(train2, test2, False)
+baseline2(train1, test1, False)
 print('dt')
-dt_regression(train1, test1, False)
 dt_regression(train2, test2, False)
+dt_regression(train1, test1, False)
 print('k_best')
-k_best(train1, test1)
 k_best_advanced(train2, test2)
+k_best(train1, test1)
+
 
 
