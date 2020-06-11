@@ -195,7 +195,7 @@ def k_best_advanced(train, test):
     # concat two dataframes for better visualization
     featureScores = pd.concat([dfcolumns, dfscores], axis=1)
     featureScores.columns = ['Specs', 'Score']  # naming the dataframe columns
-    print(featureScores.nlargest(20, 'Score'))  # print 10 best features
+    # print(featureScores.nlargest(20, 'Score'))  # print 10 best features
 
     features = ['revenue', 'budget', 'vote_count', 'runtime',
                 'other_prod_co', 'in_a_collection', 'popularity',
@@ -271,8 +271,7 @@ def k_best(train, test):
 
     y_pred = reg.predict(X_test)
 
-    # The coefficients
-    #print('Coefficients: \n', reg.coef_)
+
     # The mean squared error
     print('Mean squared error: %.2f'
           % mean_squared_error(y_test, y_pred, squared=True))
