@@ -1,6 +1,7 @@
 # This file contains the command line tool such that given a movie in its
 # name+name+year form it returns an integer estimate of how many times per day
 # that movie is expected to be watched
+
 import pickle
 import pandas as pd
 import requests
@@ -14,15 +15,13 @@ base_features = ['revenue', 'budget', 'vote_count', 'runtime',
                 'other_prod_co', 'in_a_collection', 'popularity',
                 'Adventure', 'Fantasy', 'other genre',
                 'release_date', 'Animation', 'Thriller',
-                'vote_average', 'Action', 'Science Fiction',
-                'Documentary']
+                'vote_average', 'Action', 'Science Fiction']
 
 advanced_features = ['revenue', 'budget', 'vote_count', 'runtime',
                 'other_prod_co', 'in_a_collection', 'popularity',
                 'Adventure', 'Fantasy', 'other genre',
                 'release_date', 'Animation', 'Thriller',
                 'vote_average', 'Action', 'Science Fiction',
-                'Documentary',
                 'top100_director', 'metascore']
 
 
@@ -146,7 +145,7 @@ def preprocess(api):
     del api['production_countries']
     return api
 
-
+#Convert all data to floats
 def only_numeric(df):
     df = df.copy()
     df['release_date'] = df['release_date'].apply(lambda x: int(x[0:4]) + (int(x[5:7]) / 12))
@@ -156,7 +155,8 @@ def only_numeric(df):
 
     return df
 
-
+# Given a movie title will return an integer prediction of watches per day
+# based on the models save in rf1.sav and advanced_rf1.sav
 def predict(title):
     basic = pickle.load(open('rf1.sav', 'rb'))
     advanced = pickle.load(open('advanced_rf1.sav', 'rb'))
@@ -184,6 +184,7 @@ def predict(title):
         return int(basic.predict(floats.to_numpy())[0])
 
 
+#read in title
 title = input('Enter a movie id: ')
 print(predict(title))
 
